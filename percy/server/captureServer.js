@@ -120,25 +120,12 @@ async function captureAndUpload({ name, options = {} }) {
 
     log.info(`[${name}] captured DOM — posting to Percy`);
     const response = await utils.postSnapshot({
+      ...options,
       name,
       url: options.url || currentUrl,
       domSnapshot,
       clientInfo: CLIENT_INFO,
-      environmentInfo: ENV_INFO,
-      widths: options.widths,
-      minHeight: options.minHeight,
-      enableJavaScript: options.enableJavaScript,
-      percyCSS: options.percyCSS,
-      scope: options.scope,
-      discovery: options.discovery,
-      additionalSnapshots: options.additionalSnapshots,
-      ignoreRegions: options.ignoreRegions,
-      considerRegions: options.considerRegions,
-      regions: options.regions,
-      algorithm: options.algorithm,
-      sync: options.sync,
-      testCase: options.testCase,
-      labels: options.labels
+      environmentInfo: ENV_INFO
     });
     return response;
   } finally {

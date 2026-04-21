@@ -1,41 +1,66 @@
 const { createRegion } = require('../../percy/util/regions');
 
 describe('createRegion', () => {
-  it('builds a coordinate-based ignore region by default', () => {
-    const r = createRegion({ top: 10, right: 20, bottom: 30, left: 40 });
+  it('defaults algorithm to "ignore" and produces an elementSelector-shaped region', () => {
+    const r = createRegion({ boundingBox: { top: 0, left: 0, width: 100, height: 80 } });
     expect(r.algorithm).toBe('ignore');
-    expect(r.coOrdinates).toEqual({ top: 10, right: 20, bottom: 30, left: 40 });
+    expect(r.elementSelector).toEqual({ boundingBox: { top: 0, left: 0, width: 100, height: 80 } });
   });
 
-  it('fills missing coordinate sides with 0', () => {
-    const r = createRegion({ top: 5 });
-    expect(r.coOrdinates).toEqual({ top: 5, right: 0, bottom: 0, left: 0 });
-  });
-
-  it('supports XPath-based selectors', () => {
+  it('supports XPath selectors', () => {
     const r = createRegion({ elementXpath: '//div[@id="banner"]', algorithm: 'layout' });
-    expect(r.elementXpath).toBe('//div[@id="banner"]');
-    expect(r.coOrdinates).toBeUndefined();
+    expect(r.elementSelector).toEqual({ elementXpath: '//div[@id="banner"]' });
     expect(r.algorithm).toBe('layout');
   });
 
-  it('supports CSS-based selectors', () => {
+  it('supports CSS selectors and padding', () => {
     const r = createRegion({ elementCSS: '#ad', padding: 5 });
-    expect(r.elementCSS).toBe('#ad');
+    expect(r.elementSelector).toEqual({ elementCSS: '#ad' });
     expect(r.padding).toBe(5);
   });
 
-  it('throws when neither coordinates nor selectors are given', () => {
-    expect(() => createRegion({})).toThrowError(/requires one of/);
+  it('omits configuration when algorithm is not standard/intelliignore', () => {
+    const r = createRegion({
+      elementCSS: '#ad',
+      algorithm: 'ignore',
+      diffSensitivity: 0.5,
+      carouselsEnabled: true
+    });
+    expect(r.configuration).toBeUndefined();
   });
 
-  it('includes configuration and assertion only when non-empty', () => {
-    const bare = createRegion({ top: 1 });
-    expect(bare.configuration).toBeUndefined();
-    expect(bare.assertion).toBeUndefined();
+  it('includes configuration for intelliignore', () => {
+    const r = createRegion({
+      elementCSS: '#ad',
+      algorithm: 'intelliignore',
+      diffSensitivity: 0.5,
+      imageIgnoreThreshold: 0.1,
+      carouselsEnabled: true,
+      bannersEnabled: true,
+      adsEnabled: true
+    });
+    expect(r.configuration).toEqual({
+      diffSensitivity: 0.5,
+      imageIgnoreThreshold: 0.1,
+      carouselsEnabled: true,
+      bannersEnabled: true,
+      adsEnabled: true
+    });
+  });
 
-    const withExtras = createRegion({ top: 1, configuration: { diffSensitivity: 1 }, assertion: { diffRatio: 0.1 } });
-    expect(withExtras.configuration).toEqual({ diffSensitivity: 1 });
-    expect(withExtras.assertion).toEqual({ diffRatio: 0.1 });
+  it('includes assertion block when diffIgnoreThreshold is set', () => {
+    const r = createRegion({ elementCSS: '#ad', diffIgnoreThreshold: 0.1 });
+    expect(r.assertion).toEqual({ diffIgnoreThreshold: 0.1 });
+  });
+
+  it('omits assertion block when no assertion fields are set', () => {
+    const r = createRegion({ elementCSS: '#ad' });
+    expect(r.assertion).toBeUndefined();
+  });
+
+  it('returns an empty elementSelector when nothing is passed', () => {
+    const r = createRegion({});
+    expect(r.algorithm).toBe('ignore');
+    expect(r.elementSelector).toEqual({});
   });
 });
