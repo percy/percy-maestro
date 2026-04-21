@@ -80,6 +80,16 @@ async function captureAndUpload({ name, options = {} }) {
     const currentUrl = await getCurrentUrl(Runtime);
     domSnapshot.cookies = await getCookies(Network);
 
+    try {
+      const corsFrames = await captureCrossOriginIframes({ client, Runtime, domScript, options, pageUrl: currentUrl });
+      if (corsFrames.length) {
+        domSnapshot.corsIframes = corsFrames;
+        log.debug(`[${name}] captured ${corsFrames.length} cross-origin iframe(s)`);
+      }
+    } catch (e) {
+      log.debug(`cross-origin iframe capture skipped: ${e.message}`);
+    }
+
     log.info(`[${name}] captured DOM — posting to Percy`);
     const response = await utils.postSnapshot({
       name,
@@ -113,6 +123,50 @@ async function getCookies(Network) {
   } catch {
     return [];
   }
+}
+
+async function captureCrossOriginIframes({ client, Runtime, domScript, options, pageUrl }) {
+  let pageOrigin;
+  try { pageOrigin = new URL(pageUrl).origin; } catch { return []; }
+
+  const { targetInfos } = await client.send('Target.getTargets');
+  const iframes = targetInfos.filter((t) => {
+    if (t.type !== 'iframe' || !t.url || t.url === 'about:blank') return false;
+    try { return new URL(t.url).origin !== pageOrigin; } catch { return false; }
+  });
+  if (!iframes.length) return [];
+
+  const elementIdScript = `JSON.stringify(Array.from(document.querySelectorAll('iframe')).map(function(i){return {url:i.src,id:i.getAttribute('data-percy-element-id')};}))`;
+  const { result: idsRaw } = await Runtime.evaluate({ expression: elementIdScript, returnByValue: true });
+  let iframeIdMap = [];
+  try { iframeIdMap = JSON.parse(idsRaw.value || '[]'); } catch { /* ignore */ }
+
+  const results = [];
+  const iframeOptions = { ...options, enableJavaScript: true };
+
+  for (const frame of iframes) {
+    try {
+      const { sessionId } = await client.send('Target.attachToTarget', { targetId: frame.targetId, flatten: true });
+
+      const res = await client.send('Runtime.evaluate', {
+        expression: `${domScript}; PercyDOM.serialize(${JSON.stringify(iframeOptions)})`,
+        returnByValue: true,
+        awaitPromise: true
+      }, sessionId);
+
+      const match = iframeIdMap.find((i) => i.url && frame.url && i.url === frame.url);
+      results.push({
+        frameUrl: frame.url,
+        iframeSnapshot: res.result.value,
+        iframeData: match ? { percyElementId: match.id } : null
+      });
+
+      try { await client.send('Target.detachFromTarget', { sessionId }); } catch { /* ignore */ }
+    } catch (e) {
+      log.debug(`cors iframe ${frame.url} failed: ${e.message}`);
+    }
+  }
+  return results;
 }
 
 async function captureResponsive({ Runtime, Emulation, domScript, options }) {
