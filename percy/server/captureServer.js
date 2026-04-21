@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { execSync } = require('child_process');
 const CDP = require('chrome-remote-interface');
 const utils = require('@percy/sdk-utils');
 const log = require('../util/log');
@@ -9,7 +10,34 @@ const log = require('../util/log');
 const sdkPkg = require('../../package.json');
 const DEFAULT_PORT = 5339;
 const CLIENT_INFO = `${sdkPkg.name}/${sdkPkg.version}`;
-const ENV_INFO = `maestro/${process.env.MAESTRO_VERSION || 'unknown'}`;
+
+function detectMaestroVersion() {
+  if (process.env.MAESTRO_VERSION) return process.env.MAESTRO_VERSION;
+
+  const candidateDirs = [
+    path.join(os.homedir(), '.maestro', 'lib'),
+    '/usr/local/lib/maestro',
+    '/opt/maestro/lib'
+  ];
+  for (const dir of candidateDirs) {
+    try {
+      for (const name of fs.readdirSync(dir)) {
+        const m = name.match(/^maestro-cli-(\d+\.\d+\.\d+)\.jar$/);
+        if (m) return m[1];
+      }
+    } catch { /* not a maestro install path */ }
+  }
+
+  try {
+    const out = execSync('maestro --version', { encoding: 'utf8', timeout: 15000, stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    const m = out.match(/(\d+\.\d+\.\d+)/);
+    return m ? m[1] : 'unknown';
+  } catch {
+    return 'unknown';
+  }
+}
+
+const ENV_INFO = `maestro/${detectMaestroVersion()}`;
 
 async function findChromiumDevToolsPort() {
   const candidates = await scanUserDataDirs();
