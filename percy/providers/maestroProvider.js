@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs');
 const utils = require('@percy/sdk-utils');
 const { scanOutputDir } = require('../scanner/outputDirScanner');
 const { resolveDeviceMetadata } = require('../metadata');

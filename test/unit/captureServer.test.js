@@ -7,7 +7,7 @@ const { startServer } = require('../../percy/server/captureServer');
 
 describe('captureServer.startServer', () => {
   let server;
-  afterEach(async () => { if (server) await new Promise((r) => server.close(r)); });
+  afterEach(async () => { if (server) await new Promise((resolve) => server.close(resolve)); });
 
   it('serves a healthcheck endpoint', async () => {
     server = await startServer({ port: 0 });

@@ -23,7 +23,7 @@ describe('outputDirScanner', () => {
     await fs.mkdir(path.join(tmpDir, 'flow-a'), { recursive: true });
     await fs.mkdir(path.join(tmpDir, 'flow-b'), { recursive: true });
     await fs.writeFile(path.join(tmpDir, 'flow-a', 'one.png'), 'x');
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise(resolve => setTimeout(resolve, 10));
     await fs.writeFile(path.join(tmpDir, 'flow-b', 'two.PNG'), 'x');
     await fs.writeFile(path.join(tmpDir, 'flow-a', 'ignored.txt'), 'x');
 

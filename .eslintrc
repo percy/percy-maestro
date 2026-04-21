@@ -5,6 +5,7 @@
     "jasmine": true
   },
   "extends": ["standard"],
+  "ignorePatterns": ["scripts/"],
   "rules": {
     "semi": ["error", "always"],
     "space-before-function-paren": ["error", {

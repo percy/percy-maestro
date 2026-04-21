@@ -136,7 +136,7 @@ async function captureCrossOriginIframes({ client, Runtime, domScript, options, 
   });
   if (!iframes.length) return [];
 
-  const elementIdScript = `JSON.stringify(Array.from(document.querySelectorAll('iframe')).map(function(i){return {url:i.src,id:i.getAttribute('data-percy-element-id')};}))`;
+  const elementIdScript = 'JSON.stringify(Array.from(document.querySelectorAll(\'iframe\')).map(function(i){return {url:i.src,id:i.getAttribute(\'data-percy-element-id\')};}))';
   const { result: idsRaw } = await Runtime.evaluate({ expression: elementIdScript, returnByValue: true });
   let iframeIdMap = [];
   try { iframeIdMap = JSON.parse(idsRaw.value || '[]'); } catch { /* ignore */ }
@@ -178,7 +178,7 @@ async function captureResponsive({ Runtime, Emulation, domScript, options }) {
       await Emulation.setDeviceMetricsOverride({
         width, height, deviceScaleFactor: 1, mobile: false
       });
-      await new Promise(r => setTimeout(r, 200));
+      await new Promise(resolve => setTimeout(resolve, 200));
 
       const { result } = await Runtime.evaluate({
         expression: `${domScript}; PercyDOM.serialize(${JSON.stringify({ ...options, widths: [width] })})`,
