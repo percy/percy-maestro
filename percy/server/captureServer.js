@@ -136,7 +136,9 @@ async function captureAndUpload({ name, options = {} }) {
       considerRegions: options.considerRegions,
       regions: options.regions,
       algorithm: options.algorithm,
-      sync: options.sync
+      sync: options.sync,
+      testCase: options.testCase,
+      labels: options.labels
     });
     return response;
   } finally {

@@ -58,6 +58,8 @@ That's it. Percy renders each snapshot in Chrome/Safari/Firefox/Edge across ever
 | `PERCY_SNAPSHOT_CONSIDER_REGIONS` | `considerRegions` | JSON array |
 | `PERCY_SNAPSHOT_SYNC` | `sync` | `"true"` |
 | `PERCY_SNAPSHOT_RESPONSIVE` | `responsiveSnapshotCapture` | `"true"` |
+| `PERCY_SNAPSHOT_TEST_CASE` | `testCase` | Groups snapshots in the Percy review "Test Cases" panel |
+| `PERCY_SNAPSHOT_LABELS` | `labels` | Comma-separated list of labels shown under each snapshot |
 
 ### `createRegion()` helper
 

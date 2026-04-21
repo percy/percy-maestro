@@ -13,6 +13,8 @@ declare module '@percy/maestro' {
     sync?: boolean;
     algorithm?: 'default' | 'layout' | 'ignore';
     url?: string;
+    testCase?: string;
+    labels?: string;
   }
 
   export interface UploadOptions extends SnapshotOptions {

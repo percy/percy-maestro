@@ -46,6 +46,12 @@ if (typeof PERCY_SNAPSHOT_SYNC !== 'undefined' && PERCY_SNAPSHOT_SYNC === 'true'
 if (typeof PERCY_SNAPSHOT_RESPONSIVE !== 'undefined' && PERCY_SNAPSHOT_RESPONSIVE === 'true') {
   options.responsiveSnapshotCapture = true;
 }
+if (typeof PERCY_SNAPSHOT_TEST_CASE !== 'undefined' && PERCY_SNAPSHOT_TEST_CASE) {
+  options.testCase = PERCY_SNAPSHOT_TEST_CASE;
+}
+if (typeof PERCY_SNAPSHOT_LABELS !== 'undefined' && PERCY_SNAPSHOT_LABELS) {
+  options.labels = PERCY_SNAPSHOT_LABELS;
+}
 
 var response = http.post('http://localhost:5339/snapshot', {
   headers: { 'Content-Type': 'application/json' },
