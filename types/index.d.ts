@@ -33,8 +33,8 @@ declare module '@percy/maestro' {
   }
 
   export interface BoundingBox {
-    top: number;
-    left: number;
+    x: number;
+    y: number;
     width: number;
     height: number;
   }

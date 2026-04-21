@@ -33,7 +33,16 @@ if (typeof PERCY_SNAPSHOT_SCOPE !== 'undefined' && PERCY_SNAPSHOT_SCOPE) {
 if (typeof PERCY_SNAPSHOT_ENABLE_JS !== 'undefined' && PERCY_SNAPSHOT_ENABLE_JS === 'true') {
   options.enableJavaScript = true;
 }
-// Regions are JSON strings — e.g. '[{"top":0,"left":0,"bottom":100,"right":100}]'
+// Unified regions (modern Percy API) — JSON array of region objects with
+// algorithm + elementSelector. Prefer this over PERCY_SNAPSHOT_IGNORE_REGIONS /
+// PERCY_SNAPSHOT_CONSIDER_REGIONS, which are legacy config-level fields
+// (onlyAutomate: true) not accepted as snapshot options.
+if (typeof PERCY_SNAPSHOT_REGIONS !== 'undefined' && PERCY_SNAPSHOT_REGIONS) {
+  try { options.regions = JSON.parse(PERCY_SNAPSHOT_REGIONS); } catch (e) {}
+}
+// Retained for backwards compatibility with the old API. Percy will warn
+// that these are unknown properties at the snapshot level — use
+// PERCY_SNAPSHOT_REGIONS with algorithm:"ignore"/"consider" instead.
 if (typeof PERCY_SNAPSHOT_IGNORE_REGIONS !== 'undefined' && PERCY_SNAPSHOT_IGNORE_REGIONS) {
   try { options.ignoreRegions = JSON.parse(PERCY_SNAPSHOT_IGNORE_REGIONS); } catch (e) {}
 }
