@@ -1,4 +1,4 @@
-declare module '@percy/maestro' {
+declare module '@percy/maestro-web' {
   export interface SnapshotOptions {
     widths?: number[];
     minHeight?: number;
@@ -19,17 +19,6 @@ declare module '@percy/maestro' {
     ignoreCanvasSerializationErrors?: boolean;
     ignoreStyleSheetSerializationErrors?: boolean;
     [key: string]: unknown;
-  }
-
-  export interface UploadOptions extends SnapshotOptions {
-    dir?: string;
-    name?: string;
-    deviceName?: string;
-    osName?: 'Android' | 'iOS' | 'Web';
-    osVersion?: string;
-    width?: number;
-    height?: number;
-    orientation?: 'portrait' | 'landscape';
   }
 
   export interface BoundingBox {
@@ -83,12 +72,7 @@ declare module '@percy/maestro' {
   }
 
   export function createRegion(input?: CreateRegionInput): Region;
-  export function uploadFromOutputDir(options?: UploadOptions): Promise<void>;
 
   export const CLIENT_INFO: string;
   export const ENV_INFO: string;
-
-  function percyMaestroSnapshot(name: string, options?: SnapshotOptions): Promise<unknown>;
-  export default percyMaestroSnapshot;
-  export { percyMaestroSnapshot };
 }

@@ -1,7 +1,7 @@
-// Maestro runScript — posts a DOM snapshot request to the percy-maestro
+// Maestro runScript — posts a DOM snapshot request to the percy-maestro-web
 // capture server running on localhost:5339. The server connects to Maestro's
 // Chromium via CDP, serializes DOM with @percy/dom, and posts it to the
-// Percy server started by `percy exec` (or `percy-maestro exec`).
+// Percy server started by `percy exec` (or `percy-maestro-web exec`).
 //
 // Env-var names are case-insensitive and accepted with or without the
 // PERCY_SNAPSHOT_ prefix. NAME is the only required field. Defaults for
@@ -11,14 +11,14 @@
 // Minimum YAML usage:
 //
 //   - runScript:
-//       file: ../node_modules/@percy/maestro/scripts/snapshot.js
+//       file: ../node_modules/@percy/maestro-web/scripts/snapshot.js
 //       env:
 //         NAME: "Home screen"
 //
 // With overrides:
 //
 //   - runScript:
-//       file: ../node_modules/@percy/maestro/scripts/snapshot.js
+//       file: ../node_modules/@percy/maestro-web/scripts/snapshot.js
 //       env:
 //         NAME: "Home screen"
 //         WIDTHS: "375,1280"

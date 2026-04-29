@@ -1,26 +1,26 @@
-# @percy/maestro
+# @percy/maestro-web
 
-[![npm version](https://img.shields.io/npm/v/@percy/maestro.svg)](https://www.npmjs.com/package/@percy/maestro)
+[![npm version](https://img.shields.io/npm/v/@percy/maestro-web.svg)](https://www.npmjs.com/package/@percy/maestro-web)
 
-Maestro client library for visual testing with [Percy](https://percy.io).
+Percy SDK for [Maestro](https://maestro.dev) **web flows** — visual testing powered by full DOM capture.
 
-Full DOM capture for Maestro **web flows** — multi-browser, multi-width, cross-origin iframes, regions, AI analysis — identical feature surface to [`@percy/selenium-webdriver`](https://github.com/percy/percy-selenium-javascript) and [`@percy/playwright`](https://github.com/percy/percy-playwright). Plus a screenshot-upload path for Maestro **mobile flows** (iOS / Android).
+Multi-browser, multi-width, cross-origin iframes, regions, AI analysis — identical feature surface to [`@percy/selenium-webdriver`](https://github.com/percy/percy-selenium-javascript) and [`@percy/playwright`](https://github.com/percy/percy-playwright).
 
 ## Install
 
 ```sh
-npm install --save-dev @percy/maestro @percy/cli
+npm install --save-dev @percy/maestro-web @percy/cli
 ```
 
 Install the [Maestro CLI](https://docs.maestro.dev) separately (`curl -Ls "https://get.maestro.mobile.dev" | bash`).
 
-## Usage — web flows
+## Usage
 
-Same shape as `percy exec -- playwright test`, just swap `percy exec` for `percy-maestro exec`:
+Same shape as `percy exec -- playwright test`, just swap `percy exec` for `percy-maestro-web exec`:
 
 ```sh
 export PERCY_TOKEN="<your-web-project-token>"
-percy-maestro exec -- maestro test flow.yaml
+percy-maestro-web exec -- maestro test flow.yaml
 ```
 
 Inside the YAML flow, call Percy at each capture point via `runScript:`:
@@ -30,7 +30,7 @@ url: https://example.com
 ---
 - launchApp
 - runScript:
-    file: ../node_modules/@percy/maestro/scripts/snapshot.js
+    file: ../node_modules/@percy/maestro-web/scripts/snapshot.js
     env:
       NAME: "Home"
 ```
@@ -74,7 +74,7 @@ Project-level defaults you set in `.percy.yml` (widths, minHeight, percyCSS, etc
 Build regions programmatically in Node code (matches `percy-playwright`'s exact API):
 
 ```js
-const { createRegion } = require('@percy/maestro');
+const { createRegion } = require('@percy/maestro-web');
 
 const regions = [
   createRegion({ boundingBox: { x: 0, y: 0, width: 1280, height: 80 } }),
@@ -91,35 +91,16 @@ const regions = [
 process.env.PERCY_SNAPSHOT_REGIONS = JSON.stringify(regions);
 ```
 
-## Usage — mobile flows
-
-For native Android / iOS Maestro flows, upload screenshots via the CLI:
-
-```yaml
-appId: com.example.app
----
-- launchApp
-- takeScreenshot:
-    path: ./screenshots/home
-```
-
-```sh
-percy exec -- bash -c 'maestro test flow.yaml && percy-maestro upload --dir ./screenshots'
-```
-
-Device metadata (model, OS, orientation) is auto-detected via `adb` / `xcrun simctl`.
-
 ## CLI reference
 
 ```sh
-percy-maestro exec -- <command>            # Run any command with Percy + capture server (web flows)
-percy-maestro upload [options]             # Upload Maestro screenshots to App Percy (mobile flows)
-percy-maestro serve                        # (Advanced) Start only the capture server
+percy-maestro-web exec -- <command>      # Run any command with Percy + capture server
+percy-maestro-web serve                  # (Advanced) Start only the capture server
 ```
 
 ## Parity with `@percy/playwright`
 
-| | Playwright | Maestro |
+| | Playwright | Maestro (web) |
 |---|---|---|
 | DOM capture via `@percy/dom` | ✅ | ✅ |
 | Multi-browser render | ✅ | ✅ |
@@ -133,7 +114,6 @@ percy-maestro serve                        # (Advanced) Start only the capture s
 | Project-level config applies to all snapshots | ✅ | ✅ |
 | `minHeight` / `percyCSS` / `scope` / `enableJS` | ✅ | ✅ |
 | `sync` / `discovery` / `additionalSnapshots` | ✅ | ✅ |
-| `percyScreenshot()` (Percy on Automate) | ✅ | N/A — Maestro not on BrowserStack device cloud |
 
 ## Why the call site looks different from Playwright / Selenium
 
@@ -144,9 +124,9 @@ Everything else — the SDK behavior, the Percy payload, the rendering, the revi
 ## Architecture
 
 ```
-percy-maestro exec -- maestro test flow.yaml
+percy-maestro-web exec -- maestro test flow.yaml
   │
-  ├─ percy-maestro process starts capture server on :5339
+  ├─ percy-maestro-web process starts capture server on :5339
   │     └─ CDP ↔ Chromium  (discovered via DevToolsActivePort file)
   │            runs PercyDOM.serialize() in page context,
   │            captures cookies via Network.getAllCookies,

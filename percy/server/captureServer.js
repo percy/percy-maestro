@@ -228,7 +228,7 @@ function startServer({ port = DEFAULT_PORT } = {}) {
   const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && req.url === '/healthcheck') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ ok: true, service: 'percy-maestro capture' }));
+      res.end(JSON.stringify({ ok: true, service: 'percy-maestro-web capture' }));
       return;
     }
     if (req.method === 'POST' && req.url === '/snapshot') {
@@ -251,7 +251,7 @@ function startServer({ port = DEFAULT_PORT } = {}) {
 
   return new Promise((resolve, reject) => {
     server.listen(port, () => {
-      log.info(`percy-maestro capture server listening on http://localhost:${port}`);
+      log.info(`percy-maestro-web capture server listening on http://localhost:${port}`);
       resolve(server);
     });
     server.on('error', reject);

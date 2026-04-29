@@ -1,23 +1,23 @@
 {
-  "name": "@percy/maestro",
-  "description": "Maestro client library for visual testing with Percy",
+  "name": "@percy/maestro-web",
+  "description": "Percy SDK for the Maestro framework — visual testing for Maestro web flows",
   "version": "0.1.0-alpha.0",
   "license": "MIT",
   "author": "Perceptual Inc.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/percy/percy-maestro.git"
+    "url": "git+https://github.com/percy/percy-maestro-web.git"
   },
   "keywords": [
     "maestro",
     "percy",
     "visual testing",
-    "mobile testing"
+    "web testing"
   ],
   "main": "index.js",
   "types": "types/index.d.ts",
   "bin": {
-    "percy-maestro": "./percy/cli.js"
+    "percy-maestro-web": "./percy/cli.js"
   },
   "files": [
     "index.js",
@@ -57,7 +57,7 @@
     "nyc": "^15.1.0"
   },
   "bugs": {
-    "url": "https://github.com/percy/percy-maestro/issues"
+    "url": "https://github.com/percy/percy-maestro-web/issues"
   },
-  "homepage": "https://github.com/percy/percy-maestro#readme"
+  "homepage": "https://github.com/percy/percy-maestro-web#readme"
 }

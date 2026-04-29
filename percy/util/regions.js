@@ -3,7 +3,7 @@
 // familiar with that SDK can use the same call.
 //
 // Example:
-//   const { createRegion } = require('@percy/maestro');
+//   const { createRegion } = require('@percy/maestro-web');
 //   const regions = [
 //     createRegion({ boundingBox: { top: 0, left: 0, width: 100, height: 80 } }),
 //     createRegion({ elementXpath: '//div[@id="ad-banner"]', algorithm: 'ignore' }),
